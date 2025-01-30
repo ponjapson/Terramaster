@@ -1,0 +1,67 @@
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <!-- Search and Buttons Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Search Bar -->
+            <EditText
+                android:id="@+id/searchView"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:hint="Search..."
+                android:drawableStart="@drawable/searchicon"
+                android:background="@drawable/edittext_background_selector"
+                android:textColor="@color/white"
+                android:textColorHint="@color/greyline"
+                android:paddingStart="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:drawablePadding="10dp" />
+
+        </LinearLayout>
+
+        <!-- Heading Text -->
+        <TextView
+            android:id="@+id/recentHeadingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recent"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppinsreg"
+            android:textSize="13sp"/>
+
+        <!-- Recent Search ListView -->
+        <ListView
+            android:id="@+id/recentListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:scrollbars="none" />
+
+        <!-- Displayed Search ListView -->
+        <ListView
+            android:id="@+id/displayedListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:scrollbars="none" />
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
