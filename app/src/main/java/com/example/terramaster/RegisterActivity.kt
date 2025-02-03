@@ -1,21 +1,30 @@
 package com.example.terramaster
 
 import android.app.Activity
+import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.messaging.FirebaseMessaging
+import org.json.JSONArray
 import java.io.ByteArrayOutputStream
+import java.lang.StringBuilder
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
+import kotlin.concurrent.thread
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -45,6 +54,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private val REQUEST_IMAGE_CAPTURE_FRONT = 1
     private val REQUEST_IMAGE_CAPTURE_BACK = 2
+    private val CAMERA_PERMISSION_CODE = 100
     private val DEFAULT_PROFILE_PICTURE_URL =
         "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
 
@@ -74,6 +84,7 @@ class RegisterActivity : AppCompatActivity() {
         province = findViewById(R.id.etProvince)
 
         val tvSignIn: TextView = findViewById(R.id.tvSignIn)
+
         tvSignIn.setOnClickListener {
             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -81,12 +92,13 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         btnUploadFront.setOnClickListener {
-            openCamera(REQUEST_IMAGE_CAPTURE_FRONT)
+            checkCameraPermission(REQUEST_IMAGE_CAPTURE_FRONT)
         }
 
         btnUploadBack.setOnClickListener {
-            openCamera(REQUEST_IMAGE_CAPTURE_BACK)
+            checkCameraPermission(REQUEST_IMAGE_CAPTURE_BACK)
         }
+
 
         rgUserType.setOnCheckedChangeListener { _, checkedId ->
             when (findViewById<RadioButton>(checkedId).text.toString()) {
@@ -110,10 +122,62 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    private fun getCoordinatesFromAddress(address: String, callback: (Double?, Double?) -> Unit){
+        val urlString = "https://nominatim.openstreetmap.org/search?q=${address.replace(" ", "+")}&format=json"
+
+
+        thread {
+            var found = false
+
+            try {
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connect()
+
+                val scanner = Scanner(connection.inputStream)
+                val response = StringBuilder()
+
+                while (scanner.hasNext()) {
+                    response.append(scanner.nextLine())
+                }
+                scanner.close()
+
+                val jsonArray = JSONArray(response.toString())
+                if (jsonArray.length() > 0) {
+                    val firstResult = jsonArray.getJSONObject(0)
+                    val lat = firstResult.getDouble("lat")
+                    val lon = firstResult.getDouble("lon")
+                    found = true
+                    callback(lat, lon)
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            if(!found)
+            {
+            callback(null, null)
+            }
+        }
+    }
+
     private fun openCamera(requestCode: Int) {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(packageManager) != null) {
             startActivityForResult(cameraIntent, requestCode)
+        } else {
+            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun checkCameraPermission(requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+        } else {
+            openCamera(requestCode)
         }
     }
 
@@ -134,6 +198,18 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Camera permission granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Camera permission denied!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     private fun validateAndRegisterUser() {
         val firstName = etFirstName.text.toString().trim()
@@ -201,10 +277,25 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
+        var fullAddress = "$StreetAddress, $City, $Provnce, $PostalCode, Philippines"
+
         progressBar.visibility = View.VISIBLE
         btnSignUp.isEnabled = false
 
-        uploadIDImagesAndRegister(firstName, lastName, email, password, StreetAddress, City, Provnce, PostalCode, userType)
+        getCoordinatesFromAddress(fullAddress) {lat, lon ->
+
+            if(lat != null && lon != null){
+                uploadIDImagesAndRegister(firstName, lastName, email, password, StreetAddress, City, Provnce, PostalCode, userType, lat, lon)
+            }else
+                runOnUiThread {
+                    Toast.makeText(this, "Failed to get coordinates. Please check your address.", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.GONE
+                    btnSignUp.isEnabled = true
+                }
+
+        }
+
+
     }
 
    
@@ -219,6 +310,8 @@ class RegisterActivity : AppCompatActivity() {
         Province: String,
         PostalCode: String,
         userType: String,
+        latitude: Double,
+        longitude: Double,
 
     ) {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { tokenTask ->
@@ -253,7 +346,10 @@ class RegisterActivity : AppCompatActivity() {
                                     userType,
                                     fcmToken,
                                     frontUri.toString(),
-                                    backUri.toString()
+                                    backUri.toString(),
+                                    latitude,
+                                    longitude
+
                                 )
                             }
                         }.addOnFailureListener { e ->
@@ -281,7 +377,9 @@ class RegisterActivity : AppCompatActivity() {
         userType: String,
         fcmToken: String,
         frontIDUrl: String?,
-        backIDUrl: String?
+        backIDUrl: String?,
+        latitude: Double,
+        longitude: Double
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -301,7 +399,9 @@ class RegisterActivity : AppCompatActivity() {
                         "profile_picture" to DEFAULT_PROFILE_PICTURE_URL,
                         "fcmToken" to fcmToken,
                         "frontIDUrl" to frontIDUrl,
-                        "backIDUrl" to backIDUrl
+                        "backIDUrl" to backIDUrl,
+                        "longitude" to longitude,
+                        "latitude" to latitude
                     )
 
                     db.collection("users").document(userId).set(user)
