@@ -42,7 +42,14 @@ class SearchFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
 
+        var advanceSearch: Button = view.findViewById(R.id.advanceSearch)
 
+        advanceSearch.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, FragmentAdvanceSearch())
+                .addToBackStack(null)
+                .commit()
+        }
         // Initialize views
         searchView = view.findViewById(R.id.searchView)
         recentListView = view.findViewById(R.id.recentListView)

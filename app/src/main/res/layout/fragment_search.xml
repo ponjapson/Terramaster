@@ -25,7 +25,7 @@
                 android:layout_weight="1"
                 android:hint="Search..."
                 android:drawableStart="@drawable/searchicon"
-                android:background="@drawable/edittext_background_selector"
+                android:background="@drawable/custom_edit_text"
                 android:textColor="@color/white"
                 android:textColorHint="@color/greyline"
                 android:paddingStart="10dp"
@@ -34,18 +34,30 @@
                 android:drawablePadding="10dp" />
 
         </LinearLayout>
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <!-- Heading Text -->
         <TextView
             android:id="@+id/recentHeadingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Recent"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
             android:fontFamily="@font/poppinsreg"
-            android:textSize="13sp"/>
+            android:textSize="12sp"/>
 
+            <Button
+                android:id="@+id/advanceSearch"
+                android:layout_width="145dp"
+                android:layout_height="35dp"
+                android:text="Advance Search"
+                android:textSize="12dp"
+                android:layout_marginLeft="180dp"
+                android:backgroundTint="@color/main"
+                />
+        </LinearLayout>
         <!-- Recent Search ListView -->
         <ListView
             android:id="@+id/recentListView"
