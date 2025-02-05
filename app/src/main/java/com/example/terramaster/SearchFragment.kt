@@ -103,6 +103,7 @@ class SearchFragment : Fragment() {
                     Log.d("Search", "Showing Displayed ListView")
                     recentListView.visibility = View.GONE
                     recentHeadingTextView.visibility = View.GONE
+                    advanceSearch.visibility = View.GONE
                     displayedListView.visibility = View.VISIBLE
                     filterNames(searchText)
                 } else {
@@ -110,6 +111,7 @@ class SearchFragment : Fragment() {
                     recentListView.visibility = View.VISIBLE
                     recentHeadingTextView.visibility = View.VISIBLE
                     displayedListView.visibility = View.GONE
+                    advanceSearch.visibility = View.VISIBLE
                 }
             }
         })

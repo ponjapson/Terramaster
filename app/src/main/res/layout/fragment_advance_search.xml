@@ -33,11 +33,11 @@
         <!-- Search Button -->
         <ImageButton
             android:id="@+id/search_button"
-            android:layout_width="52dp"
-            android:layout_height="42dp"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
             android:layout_marginStart="10dp"
-            android:drawableStart="@drawable/search"
             android:background="@null"
+            android:src="@drawable/search"
              />
     </LinearLayout>
 
