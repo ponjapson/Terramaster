@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:padding="16dp">
 
         <EditText
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:background="@drawable/custom_edit_text"
-            android:layout_margin="10dp"
             android:textColor="@color/white"
             android:hint="Search..."
             android:clickable="true"
@@ -22,6 +21,23 @@
             android:fontFamily="@font/poppinsreg"
             android:textSize="16sp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"/>
+            android:paddingRight="10dp" />
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Add Knowledge Guide"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/main"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppinsreg"
+            android:textSize="16sp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewKnowledge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"/>
 
 </LinearLayout>

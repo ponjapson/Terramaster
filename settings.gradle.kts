@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TerraMaster"
+rootProject.name = "Terramaster"
 include(":app")
