@@ -2,42 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/searchEditText"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:background="@drawable/custom_edit_text"
-            android:textColor="@color/white"
-            android:hint="Search..."
-            android:clickable="true"
-            android:focusable="false"
-            android:textColorHint="@color/greyline"
-            android:drawableStart="@drawable/searchicon"
-            android:drawablePadding="10dp"
-            android:paddingStart="10dp"
-            android:fontFamily="@font/poppinsreg"
-            android:textSize="16sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
+            android:layout_height="wrap_content"
+            android:background="@color/main"
+            app:title="Knowledge Guide"
+            app:titleTextColor="@android:color/white"
+            app:menu="@menu/knowledge_guide_tool_bar_menu"/>
 
-        <Button
-            android:id="@+id/addButton"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Add Knowledge Guide"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/main"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/poppinsreg"
-            android:textSize="16sp"/>
+            android:layout_height="match_parent"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:orientation="vertical"
+            android:padding="16dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewKnowledge"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"/>
-
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
 </LinearLayout>

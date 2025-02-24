@@ -32,22 +32,22 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.itemIconTintList = null
 
         // Initialize the default fragment (Feed)
-        replaceFragment(FragmentHome(), false, true)
+        replaceFragment(FragmentJobs(), false, true)
 
         // Explicitly set the selected item in the bottom navigation to "Feed"
-        bottomNavigationView.selectedItemId = R.id.nav_home
+        bottomNavigationView.selectedItemId = R.id.nav_jobs
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> {
+                R.id.nav_jobs -> {
                     Log.d("MainActivity", "Navigating to feed fragment")
-                    replaceFragment(FragmentHome(), false, true)
+                    replaceFragment(FragmentJobs(), false, true)
                     true
                 }
 
-                R.id.nav_jobs -> {
+                R.id.nav_home -> {
                     Log.d("MainActivity", "Navigating to jobs fragment")
-                    replaceFragment(FragmentJobs(), true)
+                    replaceFragment(FragmentHome(), true)
                     true
                 }
 
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
         // Handle the back press for FeedHostFragment
-        if (currentFragment is FragmentHome) {
+        if (currentFragment is FragmentJobs) {
             finish()  // Close the activity when on FeedHostFragment
         } else {
             val backStackEntryCount = supportFragmentManager.backStackEntryCount
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 // If only 1 fragment is in the back stack, navigate to FeedHostFragment
-                replaceFragment(FragmentHome(), false, true)
+                replaceFragment(FragmentJobs(), false, true)
                 updateBottomNavigationVisibility(FragmentHome())  // Ensure BottomNavigationView is visible
             }
         }

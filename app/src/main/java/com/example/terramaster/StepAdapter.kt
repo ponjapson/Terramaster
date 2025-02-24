@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class StepAdapter(private val steps: MutableList<Step>) : RecyclerView.Adapter<StepAdapter.StepViewHolder>() {
+class StepAdapter(
+    private val steps: MutableList<Step>,  // Use MutableList to allow modification
+) : RecyclerView.Adapter<StepAdapter.StepViewHolder>() {
 
     class StepViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvStepTitle: TextView = itemView.findViewById(R.id.tvStepTitle)
@@ -25,4 +27,11 @@ class StepAdapter(private val steps: MutableList<Step>) : RecyclerView.Adapter<S
     }
 
     override fun getItemCount(): Int = steps.size
+
+    // Method to update the steps in the adapter and notify the RecyclerView of the change
+    fun updateSteps(newSteps: List<Step>) {
+        steps.clear() // Clear existing steps
+        steps.addAll(newSteps) // Add new steps
+        notifyDataSetChanged() // Notify adapter to refresh the list
+    }
 }
