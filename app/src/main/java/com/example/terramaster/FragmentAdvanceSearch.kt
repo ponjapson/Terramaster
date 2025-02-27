@@ -77,19 +77,18 @@ class FragmentAdvanceSearch : Fragment() {
         }
     }
 
-    // ✅ Step 2: Handle Permission Result
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            getUserLocation() // ✅ Fetch location if permission is granted
+            getUserLocation()
         } else {
             Log.e("Permission", "Location permission denied")
         }
     }
 
-    // ✅ Step 3: Fetch User's Location
-    @SuppressLint("MissingPermission") // Suppresses warning because we already check permissions
+
+    @SuppressLint("MissingPermission")
     private fun getUserLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
@@ -111,7 +110,7 @@ class FragmentAdvanceSearch : Fragment() {
 
         if (searchQuery in listOf("surveyor", "geodetic")) {
             firestore.collection("users")
-                .whereEqualTo("user_type", "Surveyor") // 🔥 Firestore is case-sensitive
+                .whereEqualTo("user_type", "Surveyor")
                 .get()
                 .addOnSuccessListener { documents ->
                     val surveyorList = mutableListOf<Suggested>()

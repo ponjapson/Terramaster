@@ -62,6 +62,8 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation ("com.android.volley:volley:1.2.1")
-    implementation ("com.google.android.material:material:1.11.0")
-    implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation ("com.google.firebase:firebase-storage-ktx:20.0.0")
+
+
 }

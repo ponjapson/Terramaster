@@ -4,7 +4,7 @@ data class Guide(
     val knowledgeGuideId: String = "",
     val title: String = "",
     val steps: MutableList<Step> = mutableListOf(),
-    val guideType: String = " "
+    val guideType: String = ""
 )
 data class Step(
     val title: String = "",

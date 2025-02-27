@@ -5,20 +5,20 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Show this when no PDF is available -->
-    <TextView
-        android:id="@+id/tvNoPdf"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPdf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No PDF available"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textColor="@android:color/holo_red_dark"/>
+        android:orientation="vertical"
+        android:scrollbars="vertical"/>
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/pdfView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/main"/>
 
 </LinearLayout>

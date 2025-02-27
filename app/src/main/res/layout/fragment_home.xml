@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
@@ -11,19 +11,22 @@
             android:layout_height="wrap_content"
             android:background="@color/main"
             app:title="Knowledge Guide"
-            app:titleTextColor="@android:color/white"
-            app:menu="@menu/knowledge_guide_tool_bar_menu"/>
+            app:titleTextColor="@android:color/white"/>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+        <EditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:hint="Search..."
+            android:padding="10dp"
+            android:background="@drawable/custom_edit_text"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:inputType="text"
+            android:layout_margin="10dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewKnowledge"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        </LinearLayout>
+            android:layout_height="match_parent"/>
 </LinearLayout>

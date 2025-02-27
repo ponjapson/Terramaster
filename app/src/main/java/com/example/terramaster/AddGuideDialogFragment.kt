@@ -1,8 +1,6 @@
 package com.example.terramaster
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,11 +13,9 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.api.Distribution.BucketOptions.Linear
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -42,6 +38,8 @@ class AddGuideDialogFragment : Fragment() {
     private var pdfUri: Uri? = null
 
     private val stepList = mutableListOf<Step>()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,9 +59,10 @@ class AddGuideDialogFragment : Fragment() {
         btnUploadPdf = view.findViewById(R.id.btnUploadPdf)
         tvPdfFileName = view.findViewById(R.id.tvSelectedPdf)
 
-
         // Pass the necessary parameters to the adapter
-        stepAdapter = StepAdapter(stepList)
+        val guide = Guide(knowledgeGuideId = "", title = "", steps = stepList, guideType = "StepByStep") // Create a default or valid Guide object
+        stepAdapter = StepAdapter(stepList, guide)
+
         rvSteps.layoutManager = LinearLayoutManager(requireContext())
         rvSteps.adapter = stepAdapter
 
@@ -91,7 +90,6 @@ class AddGuideDialogFragment : Fragment() {
             }
         }
 
-
         btnModeGuide.setOnClickListener {
             guideSection.visibility = View.VISIBLE
             pdfSection.visibility = View.GONE
@@ -103,7 +101,6 @@ class AddGuideDialogFragment : Fragment() {
         }
 
         btnUploadPdf.setOnClickListener { selectPdf() }
-
 
         return view
     }
@@ -246,13 +243,19 @@ class AddGuideDialogFragment : Fragment() {
 
         db.collection("knowledge_guide").document(guideId).update(updateData)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "PDF uploaded successfully", Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "PDF uploaded successfully", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to save PDF URL", Toast.LENGTH_SHORT).show()
+                if (isAdded) { //
+                    Toast.makeText(requireContext(), "Failed to save PDF URL", Toast.LENGTH_SHORT).show()
+                }
             }
     }
 
-
-
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).showBottomNavigationBar()
+    }
 }

@@ -31,8 +31,7 @@ class FragmentDisplayStepByStepGuide : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewSteps)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        stepAdapter = StepAdapter(stepList)
-        recyclerView.adapter = stepAdapter
+
 
         val guideId = arguments?.getString("guideId")
         guideId?.let {
@@ -48,9 +47,32 @@ class FragmentDisplayStepByStepGuide : Fragment() {
                 guide?.let {
                     tvGuideTitle.text = it.title // Set the guide title
                     stepList.clear()
-                    stepList.addAll(it.steps) // Load the steps into the RecyclerView
+                    stepList.addAll(it.steps)
+
+                    stepAdapter = StepAdapter(stepList, it) { step, guideTitle ->
+                        navigateToEditGuideFragment(guideId, step, guideTitle)
+                    }
+                    recyclerView.adapter = stepAdapter
                     stepAdapter.notifyDataSetChanged()
                 }
             }
     }
+
+    private fun navigateToEditGuideFragment(guideId: String, step: Step, guideTitle: String) {
+        val bundle = Bundle().apply {
+            putString("guideId", guideId)         // Pass guide ID
+            putString("guideTitle", guideTitle)   // Pass guide title
+            putString("stepTitle", step.title)    // Pass step title
+            putString("description", step.description) // Pass description
+        }
+
+        val editFragment = EditGuideFragment()
+        editFragment.arguments = bundle
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, editFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
 }

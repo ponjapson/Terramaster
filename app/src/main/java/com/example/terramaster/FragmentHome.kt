@@ -1,6 +1,10 @@
 package com.example.terramaster
 
+import FragmentDisplayPDF
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,10 +15,12 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.terramaster.databinding.ActivityBookingBinding.inflate
+import com.google.android.play.integrity.internal.s
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObjects
 
@@ -22,6 +28,8 @@ class FragmentHome: Fragment() {
     private lateinit var rvGuide: RecyclerView
     private lateinit var guideAdapter: GuideAdapter
     private val guideList = mutableListOf<Guide>()
+    private lateinit var etSearch: EditText
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,9 +43,11 @@ class FragmentHome: Fragment() {
         // Enable options menu in Fragment
         setHasOptionsMenu(true)
 
-        rvGuide = view.findViewById(R.id.recyclerViewKnowledge)
 
-        guideAdapter = GuideAdapter(guideList) { guideId, guideType ->
+        rvGuide = view.findViewById(R.id.recyclerViewKnowledge)
+        etSearch = view.findViewById(R.id.etSearch)
+
+        guideAdapter = GuideAdapter(requireContext(), guideList) { guideId, guideType ->
             navigateToGuide(guideId, guideType)
         }
         rvGuide.adapter = guideAdapter
@@ -45,6 +55,17 @@ class FragmentHome: Fragment() {
 
 
         loadGuidesFromFirestore()
+
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                guideAdapter.filter(s.toString())
+            }
+        })
+
 
 
         return view
@@ -54,9 +75,10 @@ class FragmentHome: Fragment() {
         val bundle = Bundle().apply {
             putString("guideId", guideId)
         }
-
+        Log.e("PDF", "No PDF URL found or it is empty for guide $guideId")
         val fragment = if (guideType == "StepByStep") {
             FragmentDisplayStepByStepGuide()
+
         } else {
             FragmentDisplayPDF()
         }
@@ -78,15 +100,24 @@ class FragmentHome: Fragment() {
                 guideList.clear()
                 for (document in documents) {
                     val id = document.id
-                    val title = document.getString("title") ?: ""  // Fetch title only
-                    guideList.add(Guide(id, title, mutableListOf())) // Pass empty steps list
+                    val title = document.getString("title") ?: ""  // Fetch title
+                    val guideType = document.getString("guideType") ?: "" // Fetch guideType
+
+                    // Ensure guideType is not null or empty
+                    if (guideType.isNotEmpty()) {
+                        // Add the guide to the list with guideId, title, and guideType
+                        guideList.add(Guide(id, title, mutableListOf() ,guideType)) // Pass guideType here
+                    }
                 }
+                guideAdapter.setData(guideList)
                 guideAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
                 // Handle error if needed
+                Log.e("Firestore", "Error loading guides: ", exception)
             }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.knowledge_guide_tool_bar_menu, menu)
@@ -110,5 +141,10 @@ class FragmentHome: Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).showBottomNavigationBar()
     }
 }
