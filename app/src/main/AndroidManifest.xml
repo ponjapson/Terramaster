@@ -24,9 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TerraMaster"
         tools:targetApi="31">
-        <activity
-            android:name=".FragmentKnowledgeBase"
-            android:exported="false" />
+
         <activity
             android:name=".BookingActivity"
             android:exported="false" />
