@@ -47,16 +47,47 @@ class OpenStreetMapGeocoder(private val context: Context) {
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0")
 
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val jsonObject = JSONObject(response)
+                Log.d("OSM Response", response) // Log full response
 
-                val address = jsonObject.optString("display_name", "Unknown Address")
-                callback(address)
+                val jsonObject = JSONObject(response)
+                val addressObj = jsonObject.optJSONObject("address")
+
+                if (addressObj != null) {
+                    val street = addressObj.optString("road", "")
+
+                    // 🔹 Now checking "quarter" for barangay, along with other possible keys
+                    val barangay = addressObj.optString("quarter",
+                        addressObj.optString("suburb",
+                            addressObj.optString("village",
+                                addressObj.optString("hamlet", "")
+                            )
+                        )
+                    )
+
+                    val town = addressObj.optString("town", addressObj.optString("municipality", ""))
+                    val city = addressObj.optString("city", addressObj.optString("county", ""))
+                    val province = addressObj.optString("region", addressObj.optString("state", ""))
+                    val postalCode = addressObj.optString("postcode", "")
+
+                    // 🏷️ Format address and remove empty fields
+                    val fullAddress = listOf(street, barangay, town, city, province, postalCode, "Philippines")
+                        .filter { it.isNotEmpty() }
+                        .joinToString(", ")
+
+                    Log.d("Formatted Address", fullAddress)
+
+                    callback(fullAddress)
+                } else {
+                    Log.e("OSM Geocoder", "Address not found")
+                    callback("Unknown Address")
+                }
             } catch (e: Exception) {
                 Log.e("OSM Geocoder", "Error fetching address: ${e.message}")
                 callback(null)
             }
         }
     }
+
 }
 
 data class Coordinates(val latitude: Double, val longitude: Double)

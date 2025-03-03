@@ -93,7 +93,17 @@
                 android:background="@drawable/custom_edit_text"
                 android:drawableStart="@drawable/padlock"
                 android:drawablePadding="15dp" />
-
+            <EditText
+                android:id="@+id/etBarangay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Barangay"
+                android:inputType="textPostalAddress"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/custom_edit_text"
+                android:drawableStart="@drawable/address"
+                android:drawablePadding="15dp"/>
             <EditText
                 android:id="@+id/etStreetAddress"
                 android:layout_width="match_parent"

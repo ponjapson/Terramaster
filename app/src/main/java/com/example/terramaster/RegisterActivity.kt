@@ -48,6 +48,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var province: EditText
     private lateinit var postalCode: EditText
     private lateinit var storage: FirebaseStorage
+    private lateinit var etBarangay: EditText
 
     private var frontIDBitmap: Bitmap? = null
     private var backIDBitmap: Bitmap? = null
@@ -82,6 +83,7 @@ class RegisterActivity : AppCompatActivity() {
         city = findViewById(R.id.etCity)
         postalCode = findViewById(R.id.etPostalCode)
         province = findViewById(R.id.etProvince)
+        etBarangay = findViewById(R.id.etBarangay)
 
         val tvSignIn: TextView = findViewById(R.id.tvSignIn)
 
@@ -222,6 +224,7 @@ class RegisterActivity : AppCompatActivity() {
         val City = city.text.toString().trim()
         val Provnce = province.text.toString().trim()
         val PostalCode = postalCode.text.toString().trim()
+        val Barangay = etBarangay.text.toString().trim()
 
         if (firstName.isEmpty()) {
             etFirstName.error = "First Name is required"
@@ -261,8 +264,11 @@ class RegisterActivity : AppCompatActivity() {
             city.error = "City is required"
         }
 
-        if(StreetAddress.isEmpty()){
+      /*  if(StreetAddress.isEmpty()){
             streetAddress.error = "Street Address is required"
+        }*/
+        if(Barangay.isEmpty()){
+            etBarangay.error = "Street Address is required"
         }
 
         if (selectedUserTypeId == -1) {
@@ -277,7 +283,7 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        var fullAddress = "$StreetAddress, $City, $Provnce, $PostalCode, Philippines"
+        var fullAddress = "$Barangay, $StreetAddress, $City, $Provnce, $PostalCode, Philippines"
 
         progressBar.visibility = View.VISIBLE
         btnSignUp.isEnabled = false
@@ -285,7 +291,7 @@ class RegisterActivity : AppCompatActivity() {
         getCoordinatesFromAddress(fullAddress) {lat, lon ->
 
             if(lat != null && lon != null){
-                uploadIDImagesAndRegister(firstName, lastName, email, password, StreetAddress, City, Provnce, PostalCode, userType, lat, lon)
+                uploadIDImagesAndRegister(firstName, lastName, email, password, Barangay, StreetAddress, City, Provnce, PostalCode, userType, lat, lon)
             }else
                 runOnUiThread {
                     Toast.makeText(this, "Failed to get coordinates. Please check your address.", Toast.LENGTH_SHORT).show()
@@ -305,6 +311,7 @@ class RegisterActivity : AppCompatActivity() {
         lastName: String,
         email: String,
         password: String,
+        barangay: String,
         StreetAddress: String,
         City: String,
         Province: String,
@@ -339,6 +346,7 @@ class RegisterActivity : AppCompatActivity() {
                                     lastName,
                                     email,
                                     password,
+                                    barangay,
                                     StreetAddress,
                                     City,
                                     Province,
@@ -370,6 +378,7 @@ class RegisterActivity : AppCompatActivity() {
         lastName: String,
         email: String,
         password: String,
+        Barangay: String,
         StreetAddress: String,
         City: String,
         Province: String,
@@ -390,6 +399,7 @@ class RegisterActivity : AppCompatActivity() {
                         "first_name" to firstName,
                         "last_name" to lastName,
                         "email" to email,
+                        "Barangay" to Barangay,
                         "Street_Address" to StreetAddress,
                         "City" to City,
                         "Province" to Province,

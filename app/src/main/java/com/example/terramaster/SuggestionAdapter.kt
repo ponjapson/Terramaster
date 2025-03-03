@@ -28,6 +28,7 @@ class SuggestionAdapter(private val surveyors: List<Suggested>, private val frag
         holder.itemView.setOnClickListener {
             onItemClick(surveyor.userId) // Pass userId when clicked
         }
+        holder.addressTextView.text = surveyor.address
         holder.addressTextView.setOnClickListener {
             val fragment = FragmentMap()
 
